@@ -1,0 +1,80 @@
+model:
+  sample_cdr: False
+  encoder:
+    node_embed_size: 256
+    edge_embed_size: 128
+    seq_emb_size: 1024 # PLM嵌入维度
+    index_embed_size: 128 # 时间编码和位置编码维度
+    ipa:
+      c_s: 256 #${model.encoder.node_embed_size}
+      c_z: 128 #${model.encoder.edge_embed_size}
+      c_hidden: 16
+      no_heads: 8
+      no_qk_points: 8
+      no_v_points: 12
+      seq_tfmr_num_heads: 4
+      seq_tfmr_num_layers: 4
+      num_blocks: 10
+      dropout: 0.1
+  interpolant:
+    min_t: 1.e-2
+    t_normalization_clip: 0.9
+    sample_sequence: True
+    sample_structure: True
+    rots:
+      train_schedule: linear
+      sample_schedule: exp
+      exp_rate: 10
+    sampling:
+      num_timesteps: 100
+  scale:
+    trans:
+      position_mean: # Mean position for atom placement
+        - 0.0
+        - 0.0
+        - 0.0
+      position_scale: # Scale for atom positions
+        - 0.1
+    bb_atom:
+        - 0.1
+
+train:
+  max_iters: 30000
+  gpu_nums: 4
+  pseudo_batch_size: 8  # pseudo_batch_size*gpu_nums=batch_size
+  batch_size: 32
+  lr: 2.e-4
+  val_freq: 500
+  log_fq: 5
+  seed: 2025
+  max_grad_norm: 20.0
+  ema_decay: 0.999
+  cdr_weight: 2.0
+  loss_weights:
+    trans_loss: 2.0
+    rot_vf_loss: 1.0
+    bb_atom_loss: 0.2
+    bb_len_loss: 0.1
+    bb_ang_loss: 0.1
+    pair_loss: 0.2
+    plm_emb_loss: 0.02
+    plm_cos_loss: 0.25
+    seqs_loss: 0.25
+
+sample:
+  root_path: ./sample_result
+  nums: 800
+  save_sequence: True
+  heavy_length_pkl_dir: /srv/storage/ssd/zzl/lzj/dataset/Observed Antibody Space/heavy_length_list.pkl
+  light_length_pkl_dir: /srv/storage/ssd/zzl/lzj/dataset/Observed Antibody Space/light_length_list.pkl
+
+dataset:
+  type: sabdab
+  root_path_dir: /srv/storage/hdd/zzl/lzj/dataset/SAbDab
+  summary_path_dir: /srv/storage/hdd/zzl/lzj/dataset/SAbDab/SAbDab_summary_all_25_3_13.tsv
+  structure_dir: /srv/storage/hdd/zzl/lzj/dataset/SAbDab/chothia
+  processed_dir: /srv/storage/hdd/zzl/lzj/dataset/SAbDab/processed_onlyV
+  embedding_dir: /srv/storage/hdd/zzl/lzj/dataset/SAbDab/processed_onlyV/SAbDab_processed_sequences_IgBert_embedding.h5
+  chain_break_jump: 50
+  reset: False
+  is_transform: True
