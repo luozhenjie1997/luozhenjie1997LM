@@ -16,12 +16,12 @@ conda activate ImmunoglobulinGenerate
 ```
 
 ## Process Data
-IgFlow-LM is trained on the SabDab dataset. First, visit https://opig.stats.ox.ac.uk/webapps/sabdab-sabpred/sabdab/archive/all/ to download and extract all structural files.
+IgFlow-LM is trained on the SabDab dataset. First, visit sabdab to download and extract all structural files.
 
 Next, run ```model/utils/sabdab_onlyV.py``` to preprocess the data. 
 Then, execute ```data/write_csv.py``` to generate a CSV file with deduplicated variable region sequences and a serialized list of sequence IDs.
 
-Finally, run ```get_IgBert_plm_emb.py``` to obtain the IgBert latent space embeddings. You can get IgBert in https://huggingface.co/Exscientia/IgBert .
+Finally, run ```get_IgBert_plm_emb.py``` to obtain the IgBert latent space embeddings. You can get IgBert in Hugging Face.
 
 
 ## Train CPL-Diff
